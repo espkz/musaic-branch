@@ -1,7 +1,7 @@
 import axios from 'axios';
 import queryString from 'query-string';
 
-const clientId = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID;
+const clientId = 'bea1db6218ac4115ab7542a5ede4d160';
 const clientSecret = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_SECRET;
 const redirectUri = process.env.NEXT_PUBLIC_SPOTIFY_REDIRECT_URI;
 
