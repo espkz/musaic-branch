@@ -2,8 +2,8 @@ import axios from 'axios';
 import queryString from 'query-string';
 
 const clientId = 'bea1db6218ac4115ab7542a5ede4d160';
-const clientSecret = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_SECRET;
-const redirectUri = process.env.NEXT_PUBLIC_SPOTIFY_REDIRECT_URI;
+const clientSecret = '2cae742a30cb4b69b155f0280003da75';
+const redirectUri = 'https://musaic-topaz.vercel.app/callback';
 
 export const getAuthorizeUrl = () => {
   const params = {
