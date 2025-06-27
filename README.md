@@ -10,15 +10,15 @@ Musaic is a web-based platform, so there is no need to install any software. Sim
 
 NOTE: As the platform utilizes the free access version of the Spotify API, use is limited to 25 registered users on the Spotify API. To request access, please contact the owner of the repository.
 
-![Alt text](https://media.discordapp.net/attachments/762633772671696907/1118196655787888680/Screen_Shot_2023-06-13_at_08.12.11.png?width=1269&height=676)
+![Alt text](img/title.png)
 
 # Logging In
 To access Musaic, you will need to log in using your existing Spotify account information. Click the "Let’s Go!" or “Login” button on the homepage, and you will be redirected to the Spotify authentication page. 
 Enter your Spotify username and password, then grant Musaic permission to access your account information. Once you have completed the authentication process, you will be taken to your Musaic dashboard.
 
-![Alt text](https://media.discordapp.net/attachments/762633772671696907/1118196656115023892/Screen_Shot_2023-06-13_at_08.12.22.png?width=1245&height=676)
+![Alt text](img/tos.png)
 
-![Alt text](https://media.discordapp.net/attachments/762633772671696907/1118197604862410803/Screen_Shot_2023-06-13_at_08.16.57.png?width=1238&height=676)
+![Alt text](img/auth.png)
 
 # Dashboard
 The dashboard is your central hub for navigating the Musaic platform. From here, you can perform the following actions:
@@ -52,7 +52,7 @@ will clear their access token, so they must log back in using either the “Let�
 
 IMPORTANT: As this was a project that had to be in working condition within a short span of time, some features may not be available.
 
-![Alt text](https://media.discordapp.net/attachments/762633772671696907/1118196656400244746/Screen_Shot_2023-06-13_at_08.12.53.png?width=1243&height=676)
+![Alt text](img/menu.png)
 
 # Creating a Playlist
 
@@ -61,7 +61,7 @@ Musaic allows users to choose between creating a playlist on their own or with t
 
 Note: the collaborative feature of Musaic is currently unavailable
 
-![Alt text](https://media.discordapp.net/attachments/762633772671696907/1118197605164404767/Screen_Shot_2023-06-13_at_08.17.18.png?width=1235&height=676)
+![Alt text](img/get_started.png)
 
 Ready Up:
 When all invited friends have joined the lobby, each user must click the "Ready" button to indicate they are prepared to proceed.
@@ -70,15 +70,15 @@ Vibe Picker:
 After everyone is ready, the group will be taken to the "Vibe Picker" page. The host will then input a phrase that represents the vibe they want for the playlist. For example, if you want a playlist with an upbeat, party 
 atmosphere, you could enter "dance party!"
 
-![Alt text](https://media.discordapp.net/attachments/762633772671696907/1118197605458001992/Screen_Shot_2023-06-13_at_08.17.32.png?width=1237&height=676)
+![Alt text](img/name.png)
 
 Generate Playlist:
 Musaic will then use artificial intelligence to analyze the submitted phrase and each user's top Spotify artists. Based on this information, a unique collaborative playlist will be generated that captures the desired vibe
 and incorporates the musical tastes of all participants.
 
-![Alt text](https://media.discordapp.net/attachments/762633772671696907/1118197605869031564/Screen_Shot_2023-06-13_at_08.17.36.png?width=1238&height=676)
+![Alt text](img/loading.png)
 
-![Alt text](https://media.discordapp.net/attachments/762633772671696907/1118199019307540490/Screen_Shot_2023-06-13_at_08.21.50.png?width=1407&height=676)
+![Alt text](img/edit.png)
 
 User Influence:
 The User Influence slider determines how much the user wants their music tastes to be incorporated into their playlist. The lower the value of the User Influence, the more songs there will be that is recommended by the AI,
@@ -90,9 +90,9 @@ You can change the number of songs included in the playlist by adjusting the sli
 Review and Save:
 Review the generated playlist and, if you're satisfied with the result, click the "Create Playlist" button to add it to your Spotify library.
 
-![Alt text](https://media.discordapp.net/attachments/762633772671696907/1118199019664068678/Screen_Shot_2023-06-13_at_08.22.02.png?width=1243&height=676)
+![Alt text](img/new_menu.png)
 
-![Alt text](https://media.discordapp.net/attachments/762633772671696907/1118199020125433967/Screen_Shot_2023-06-13_at_08.23.04.png?width=993&height=676)
+![Alt text](img/playlist.png)
 
 
 
