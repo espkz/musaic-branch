@@ -8,7 +8,7 @@ const Lobbylist = ({ users }) => {
         <div>
             {users.map((user) => (
                 <div key={user.id}>
-                    <User avatar={user.avatar} id={user.id}/>
+                    <User avatar={user.avatar} id={user.id} ready={user.ready}/>
                     &nbsp;
                 </div>
             ))}

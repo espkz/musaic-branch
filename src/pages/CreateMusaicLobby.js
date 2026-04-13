@@ -5,13 +5,19 @@ import Banner from "@/components/active/_bannerandsub";
 import MainBox from "@/components/active/_mainbox";
 import MainButton from "@/components/active/_generalbutton";
 
-const CreateMusaicLobby = ({ closeLobby, openVibePicker, musaicKey, copyToClipboard, createLobby, ...props }) => {
+const CreateMusaicLobby = ({
+  closeLobby,
+  openVibePicker,
+  openCollaborativeLobby,
+  musaicKey,
+  copyToClipboard,
+  createLobby,
+}) => {
   useEffect(() => {
-    console.log('CreateMusaicLobby useEffect');
-    createLobby();
+    createLobby().catch((error) => {
+      console.error("Failed to create lobby:", error);
+    });
   }, []);
-
-  console.log('CreateMusaicLobby render', { closeLobby, openVibePicker, musaicKey, copyToClipboard, createLobby, ...props });
 
   return (
     <MainBox
@@ -27,9 +33,14 @@ const CreateMusaicLobby = ({ closeLobby, openVibePicker, musaicKey, copyToClipbo
           style={{ flexDirection: "column", marginTop: "30px", justifyContent: "space-between" }}
         >
           <Center 
-          object2={<div style = {{height:"50px"}}></div>}
-          object4={<div className={styles.drawertextdesigns}> Get started with your own Musaic:</div>}
-          object5= {<MainButton name="Create a Solo Musaic" loc={openVibePicker} />}/>
+            object={<div className={styles.drawertextdesigns}>Musaic Key: {musaicKey || "Generating..."}</div>}
+            object2={<div style={{height:"20px"}}></div>}
+            object3={<MainButton name="Copy Musaic Key" loc={copyToClipboard} />}
+            object4={<div style={{height:"20px"}}></div>}
+            object5={<MainButton name="Open Collaborative Lobby" loc={openCollaborativeLobby} />}
+            object6={<div style={{height:"20px"}}></div>}
+            object7={<MainButton name="Create a Solo Musaic" loc={openVibePicker} />}
+          />
         </div>
       }
     />

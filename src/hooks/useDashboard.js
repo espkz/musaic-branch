@@ -1,54 +1,51 @@
 import { useState } from 'react';
-import { getDatabase, ref, child, set, push, onValue, off } from "firebase/database";
+import { getDatabase, ref, child, set, push, get, query, orderByChild, equalTo } from "firebase/database";
 
 const useDashboard = (user, setSelectedPlaylist, setUser, closeJoinMusaicDrawer) => {
-  const [anchorLobby, setAnchorLobby] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [musaicKey, setMusaicKey] = useState(''); // Added this line
-  const [lobbyOpen, setLobbyOpen] = useState(false); // Added this line
+  const [musaicKey, setMusaicKey] = useState('');
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
   };
 
 
-  const createLobby = () => {
-    const accessToken = sessionStorage.getItem('spotify_access_token');
-    console.log('Function called')
-    const generatedMusaicKey = Math.random().toString(36).substr(2, 8).toUpperCase(); // Generates an 8-character alphanumeric Musaic Key
+  const createLobby = async () => {
+    const generatedMusaicKey = Math.random().toString(36).substr(2, 8).toUpperCase();
     setMusaicKey(generatedMusaicKey);
-    
+
     const db = getDatabase();
-    console.log('db made')
     const newLobbyRef = push(child(ref(db), 'lobbies'));
+
+    const userTopArtists = (user?.top_artists || []).slice(0, 20);
     const lobbyId = newLobbyRef.key;
-    console.log('lobbyID done')
-    console.log(user)
-    console.log('of course a user exists, right?')
     const lobbyData = {
       id: lobbyId,
-      musaicKey: generatedMusaicKey, 
+      host_user_id: user.user_id,
+      created_at: Date.now(),
+      locked: false,
+      generation_started_at: null,
+      generation_started_by: null,
+      musaicKey: generatedMusaicKey,
       users: {
         [user.user_id]: {
           id: user.user_id,
+          username: user.username || user.user_id,
+          image_url: user.image_url || "/landing/logo.png",
           ready: false,
-          input: '',
-          token: accessToken,
+          top_artists: userTopArtists,
         },
       },
     };
-    
-    console.log('Lobby data')
-    console.log(lobbyData)
-    set(newLobbyRef, lobbyData)
-      .then(() => {
-        console.log('Lobby created:', lobbyId);
-        setMusaicKey(generatedMusaicKey);
-        setLobbyOpen(true);
-      })
-      .catch((error) => {
-        console.error('Error creating lobby:', error);
-      });
+
+    try {
+      await set(newLobbyRef, lobbyData);
+      setMusaicKey(generatedMusaicKey);
+      return generatedMusaicKey;
+    } catch (error) {
+      console.error('Error creating lobby:', error);
+      throw error;
+    }
   };
   
   const copyToClipboard = () => {
@@ -61,47 +58,38 @@ const useDashboard = (user, setSelectedPlaylist, setUser, closeJoinMusaicDrawer)
       });
   };
   
-  const joinLobby = (musaicKey) => {
+  const joinLobby = async (musaicKey) => {
     const db = getDatabase();
-    const lobbiesRef = ref(db, 'lobbies');
-  
-    const onValueCallback = onValue(lobbiesRef, (snapshot) => {
-      const lobbies = snapshot.val();
-      const foundLobby = Object.values(lobbies).find((lobby) => lobby.musaicKey === musaicKey);
-  
-      if (foundLobby) {
-        const lobbyRef = ref(db, `lobbies/${foundLobby.id}`);
-        const userRef = ref(lobbyRef, `users/${user.user_id}`);
-  
-        if (!foundLobby.users[user.user_id]) {
-          const userData = {
-            id: user.user_id,
-            ready: false,
-            input: '',
-          };
-    
-          set(userRef, userData)
-            .then(() => {
-              console.log('User joined lobby:', foundLobby.id);
-              closeJoinMusaicDrawer();
-              setLobbyOpen(true);
-            })
-            .catch((error) => {
-              console.error('Error joining lobby:', error);
-            });
-        } else {
-          console.log('User already in lobby:', foundLobby.id);
-          closeJoinMusaicDrawer();
-          setLobbyOpen(true);
-        }
-      } else {
-        console.error('Invalid Musaic Key:', musaicKey);
-      }
-  
-      // Remove the listener once we got the value
-      console.log('Join lobby called with Musaic Key:', musaicKey);
-      off(lobbiesRef, 'value', onValueCallback);
-    });
+    const lobbiesRef = query(ref(db, "lobbies"), orderByChild("musaicKey"), equalTo(musaicKey));
+
+    const snapshot = await get(lobbiesRef);
+    if (!snapshot.exists()) {
+      throw new Error("Invalid Musaic Key.");
+    }
+
+    const lobbyEntry = Object.entries(snapshot.val())[0];
+    const [lobbyId, lobby] = lobbyEntry;
+    const userRef = ref(db, `lobbies/${lobbyId}/users/${user.user_id}`);
+    const isExistingMember = !!(lobby.users && lobby.users[user.user_id]);
+
+    if (lobby.locked && !isExistingMember) {
+      throw new Error("This Musaic has already started and is locked.");
+    }
+
+    if (!isExistingMember) {
+      const userTopArtists = (user?.top_artists || []).slice(0, 20);
+      const userData = {
+        id: user.user_id,
+        username: user.username || user.user_id,
+        image_url: user.image_url || "/landing/logo.png",
+        ready: false,
+        top_artists: userTopArtists,
+      };
+      await set(userRef, userData);
+    }
+
+    closeJoinMusaicDrawer();
+    return musaicKey;
   };
   
   
@@ -125,7 +113,6 @@ const useDashboard = (user, setSelectedPlaylist, setUser, closeJoinMusaicDrawer)
 
         if (response.ok) {
           const data = await response.json();
-          const externalUrl = data.external_url;
           const createdPlaylist = data.playlist;
 
           // Add the created playlist to the user's playlists in session storage
@@ -149,17 +136,13 @@ const useDashboard = (user, setSelectedPlaylist, setUser, closeJoinMusaicDrawer)
 
 
   return {
-    anchorLobby,
-    setAnchorLobby,
     searchTerm,
-    setSearchTerm,
     handleSearchChange,
     createLobby,
     joinLobby,
     handleCreatePlaylist,
     copyToClipboard,
     musaicKey,
-    setMusaicKey
   };
 };
 

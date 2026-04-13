@@ -19,7 +19,7 @@ import Center from "@/components/active/_center";
 import { formatTracks } from "./dashboard";
 import Poster from "@/components/_poster";
 
-export default function VibePicker({ handleCreatePlaylist, closeAllDrawers }) {
+export default function VibePicker({ handleCreatePlaylist, closeAllDrawers, collaborativeMusaicKey = null }) {
 
   const {
     phase,
@@ -73,7 +73,7 @@ export default function VibePicker({ handleCreatePlaylist, closeAllDrawers }) {
 
   const handleReadyClick = () => {
     setPlaylistName(userInput);
-    fetchRecommendedTracks(userInput, openAiApiKey);
+    fetchRecommendedTracks(userInput, openAiApiKey, collaborativeMusaicKey);
   };
 
   const handleKeyPress = (event) => {

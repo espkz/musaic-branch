@@ -21,8 +21,6 @@ import VibePicker from './vibePicker';
 import useDashboard from '@/hooks/useDashboard';
 import { Checkbox } from "@mui/material";
 
-import { getDatabase, ref, set, push, child, update } from 'firebase/database';
-
 
 
 export const formatTracks = (tracks) => {
@@ -43,11 +41,9 @@ const Dashboard = ({ navigateToSignIn, navigateToLanding, user, setUser }) => {
   const [vibePickerOpen, setVibePickerOpen] = useState(false);
   const [createMusaicDrawerOpen, setCreateMusaicDrawerOpen] = useState(false);
   const [joinMusaicDrawerOpen, setJoinMusaicDrawerOpen] = useState(false);
-  const [lobbyIdInput, setLobbyIdInput] = useState('');
+  const [lobbyDrawerOpen, setLobbyDrawerOpen] = useState(false);
+  const [activeMusaicKey, setActiveMusaicKey] = useState('');
   const spotify_yt = "/signin/spotify_yt.png";
-  const handleLobbyIdInputChange = (event) => {
-    setLobbyIdInput(event.target.value);
-  };
 
   const openVibePicker = () => {
     setVibePickerOpen(true);
@@ -73,15 +69,6 @@ const Dashboard = ({ navigateToSignIn, navigateToLanding, user, setUser }) => {
     setJoinMusaicDrawerOpen(false);
   };
 
-  const handleJoinLobbySubmit = () => {
-    if (lobbyIdInput.trim() !== "") {
-      joinLobby(lobbyIdInput.trim());
-    } else {
-      // Replace alert() with Material-UI Snackbar
-    }
-  };
-
-
   const [loadingPlaylist, setLoadingPlaylist] = useState(false);
   const { playlists = [], image_url = "/landing/logo.png", username } = user || {};
   const [selectedPlaylist, setSelectedPlaylist] = useState(null);
@@ -92,13 +79,9 @@ const Dashboard = ({ navigateToSignIn, navigateToLanding, user, setUser }) => {
     joinLobby,
     handleCreatePlaylist,
     searchTerm,
-    setSearchTerm,
     handleSearchChange,
-    anchorLobby,
-    setAnchorLobby,
     copyToClipboard,
-    musaicKey,
-    setMusaicKey
+    musaicKey
   } = useDashboard(user, setSelectedPlaylist, setUser, closeJoinMusaicDrawer);
 
   const avatar = user?.image_url || "/landing/logo.png";
@@ -127,15 +110,9 @@ const Dashboard = ({ navigateToSignIn, navigateToLanding, user, setUser }) => {
   };
   const [anchorEl, setAnchorEl] = React.useState(null);
 
-  const openLobby = (event) => {
-    setAnchorLobby(event.currentTarget);
-  };
-
   const closeLobby = () => {
-    setAnchorLobby(null);
+    setLobbyDrawerOpen(false);
   };
-
-  const [lobbyOpen, setLobbyOpen] = useState(false);
 
 
 
@@ -238,8 +215,10 @@ const Dashboard = ({ navigateToSignIn, navigateToLanding, user, setUser }) => {
   const renderDrawers = () => {
     return (
       <>
-        <Drawer anchor={"right"} open={Boolean(anchorLobby)} onClose={closeLobby}>
+        <Drawer anchor={"right"} open={lobbyDrawerOpen} onClose={closeLobby}>
           <Lobby
+            musaicKey={activeMusaicKey}
+            currentUser={user}
             handleCreatePlaylist={handleCreatePlaylist}
             closeLobby={closeLobby}
           />
@@ -250,7 +229,21 @@ const Dashboard = ({ navigateToSignIn, navigateToLanding, user, setUser }) => {
           onClose={closeCreateMusaicDrawer}
           sx={{ backgroundColor: "background" }}
         >
-          <CreateMusaicLobby createLobby={createLobby} openVibePicker={openVibePicker} closeLobby={closeCreateMusaicDrawer} musaicKey={musaicKey} copyToClipboard={copyToClipboard} />
+          <CreateMusaicLobby
+            createLobby={createLobby}
+            openVibePicker={openVibePicker}
+            closeLobby={closeCreateMusaicDrawer}
+            musaicKey={musaicKey}
+            copyToClipboard={copyToClipboard}
+            openCollaborativeLobby={() => {
+              if (!musaicKey) {
+                return;
+              }
+              setActiveMusaicKey(musaicKey);
+              setCreateMusaicDrawerOpen(false);
+              setLobbyDrawerOpen(true);
+            }}
+          />
         </Drawer>
         <Drawer
           anchor="left"
@@ -258,7 +251,16 @@ const Dashboard = ({ navigateToSignIn, navigateToLanding, user, setUser }) => {
           onClose={closeJoinMusaicDrawer}
           sx={{ backgroundColor: "background" }}
         >
-          <JoinMusaicLobby user={user} joinLobby={joinLobby} closeLobby={closeJoinMusaicDrawer} />
+          <JoinMusaicLobby
+            user={user}
+            joinLobby={joinLobby}
+            closeLobby={closeJoinMusaicDrawer}
+            onJoinedLobby={(joinedMusaicKey) => {
+              setActiveMusaicKey(joinedMusaicKey);
+              setJoinMusaicDrawerOpen(false);
+              setLobbyDrawerOpen(true);
+            }}
+          />
         </Drawer>
         <Drawer
           anchor="left"
@@ -330,6 +332,7 @@ const Dashboard = ({ navigateToSignIn, navigateToLanding, user, setUser }) => {
                 </div>
                 <div>
                   <MainButton mrr="10px" loc={openCreateMusaicDrawer} name='Create a Musaic'/>
+                  <MainButton mtt="10px" mrr="10px" loc={openJoinMusaicDrawer} name='Join a Musaic'/>
                 </div>
               </div>
   

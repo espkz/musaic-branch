@@ -19,15 +19,16 @@ const User = (props) => {
             <div style={{ flexDirection: "column", fontFamily: "Inter, sans-serif", fontSize: "80%", fontWeight: "500", color: "#494362", letterSpacing: "1px", alignSelf: "center", marginLeft: "10px" }}>
                 {props.id}
             </div>
-            {/* <div style = {{
-                    flexDirection:"row", 
-                    width:"20px", 
-                    height: "20px", 
-                    marginLeft: "30%",
+            <div style = {{
+                    flexDirection:"row",
+                    width:"12px",
+                    height: "12px",
+                    marginLeft: "auto",
+                    marginRight: "16px",
                     borderRadius:"30px",
-                    background: "#E0765E",
+                    background: props.ready ? "#64936E" : "#E0765E",
                     alignSelf:"center"}}>
-                </div> */}
+            </div>
         </div>
     );
 }

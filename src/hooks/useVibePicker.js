@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from 'react';
+import { getDatabase, ref, query, orderByChild, equalTo, get } from "firebase/database";
 
 const useVibePicker = () => {
   const [phase, setPhase] = useState('input');
@@ -45,7 +46,7 @@ const useVibePicker = () => {
     return array;
   };
 
-  const fetchRecommendedTracks = async (userInput, openAiApiKey) => {
+  const fetchRecommendedTracks = async (userInput, openAiApiKey, collaborativeMusaicKey = null) => {
     try {
       setError('');
       setPhase('processing');
@@ -59,9 +60,39 @@ const useVibePicker = () => {
         throw new Error('Please provide your OpenAI API key.');
       }
   
+      let artistsForPrompt = artists;
+
+      if (collaborativeMusaicKey) {
+        const db = getDatabase();
+        const lobbyQuery = query(ref(db, "lobbies"), orderByChild("musaicKey"), equalTo(collaborativeMusaicKey));
+        const lobbySnapshot = await get(lobbyQuery);
+
+        if (lobbySnapshot.exists()) {
+          const [, lobby] = Object.entries(lobbySnapshot.val())[0];
+          const lobbyUsers = Object.values(lobby.users || {});
+          const mergedArtists = [];
+
+          lobbyUsers.forEach((lobbyUser) => {
+            const collaboratorArtists = Array.isArray(lobbyUser.top_artists) ? lobbyUser.top_artists : [];
+            collaboratorArtists.forEach((artist) => {
+              if (typeof artist === "string") {
+                mergedArtists.push(artist);
+              } else if (artist && typeof artist.name === "string") {
+                mergedArtists.push(artist.name);
+              }
+            });
+          });
+
+          const deduped = [...new Set(mergedArtists.map((artist) => artist.trim()).filter(Boolean))];
+          if (deduped.length > 0) {
+            artistsForPrompt = deduped.slice(0, 80);
+          }
+        }
+      }
+
       const requestBody = {
         input: userInput,
-        artist_ids: artists,
+        artist_ids: artistsForPrompt,
         user_id: user_id
       };
 
