@@ -6,7 +6,7 @@ class PlaylistMakerGPT:
 
     def __init__(self, api_key, model=None):
         self.api_key = (api_key or "").strip()
-        self.model = model or os.environ.get("OPENAI_MODEL", "gpt-4o-mini")
+        self.model = model or os.environ.get("OPENAI_MODEL", "gpt-5-mini")
         self.base_url = os.environ.get("OPENAI_BASE_URL", "https://api.openai.com/v1").rstrip("/")
 
     def _chat_completion(self, prompt):
