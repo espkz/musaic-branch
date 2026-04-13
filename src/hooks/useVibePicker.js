@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 
 const useVibePicker = () => {
   const [phase, setPhase] = useState('input');
+  const [error, setError] = useState('');
   const [publicRatio, setPublicRatio] = useState(50);
   const [limit, setLimit] = useState(20);
 
@@ -44,23 +45,29 @@ const useVibePicker = () => {
     return array;
   };
 
-  const fetchRecommendedTracks = async (userInput) => {
+  const fetchRecommendedTracks = async (userInput, openAiApiKey) => {
     try {
+      setError('');
       setPhase('processing');
 
       const userData = JSON.parse(sessionStorage.getItem('user_data'));
       const accessToken = sessionStorage.getItem('spotify_access_token');
       const { top_artists: artists } = userData;
       const { user_id : user_id } = userData;
-
-      console.log('User data:', userData);
-      console.log('Spotify access token:', accessToken);
   
+      if (!openAiApiKey || !openAiApiKey.trim()) {
+        throw new Error('Please provide your OpenAI API key.');
+      }
   
       const requestBody = {
         input: userInput,
         artist_ids: artists,
         user_id: user_id
+      };
+
+      const gptRequestBody = {
+        ...requestBody,
+        openai_api_key: openAiApiKey.trim(),
       };
   
       // Fetch GPT artists
@@ -69,7 +76,7 @@ const useVibePicker = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(requestBody),
+        body: JSON.stringify(gptRequestBody),
       });
   
       if (!gptResponse.ok) {
@@ -77,15 +84,11 @@ const useVibePicker = () => {
       }
   
       const gptData = await gptResponse.json();
-      console.log('GPT artists:', gptData);
       const { public_artists, user_artists } = gptData;
   
-      console.log('1. Before filtering artists');
       // Filter out empty artist names
       const filteredPublicArtists = public_artists.filter(artist => artist !== '');
       const filteredUserArtists = user_artists.filter(artist => artist !== '');
-  
-      console.log('2. After filtering artists');
 
       const response2 = await fetch('/api/get_posters', {
         method: 'POST',
@@ -95,15 +98,11 @@ const useVibePicker = () => {
         body: JSON.stringify(requestBody),
       });
 
-      console.log('response2:', response2);
-
       const data2 = await response2.json();
-      console.log('data2:', data2);
 
   
       // Function to fetch tracks in batches
-      const fetchTracks = async (artists, isPublic) => {
-        console.log("1. beginning");
+      const fetchTracks = async (artists) => {
         let tracks = [];
       
         for (const artist of artists) {
@@ -133,23 +132,14 @@ const useVibePicker = () => {
             tracks = [...tracks, ...tracksToAdd];
           }
           else {
-            console.log("fetchedTracks is not defined yet or has a length of 0")
+            // Continue if no tracks are found for this artist.
           }
         }
-        console.log("4. End of fetchTracks loop");
-
-
-        console.log(isPublic)
-        console.log(tracks)
         return tracks;
       };
       
-  
-      console.log('5. Before fetching tracks');
-    
-      const publicFetchedTracks = await fetchTracks(filteredPublicArtists, true);
-      console.log('5.5, before fetching user tracks')
-      const userFetchedTracks = await fetchTracks(filteredUserArtists, false);
+      const publicFetchedTracks = await fetchTracks(filteredPublicArtists);
+      const userFetchedTracks = await fetchTracks(filteredUserArtists);
       
       
 
@@ -158,7 +148,8 @@ const useVibePicker = () => {
       setUserTopData(data2);
 
     } catch (error) {
-      console.error('Error fetching recommended tracks:', error.message);
+      setError(error.message || 'Unable to build playlist.');
+      setPhase('input');
     }
   };
   
@@ -168,6 +159,7 @@ const useVibePicker = () => {
 
   return {
     phase,
+    error,
     userTopData,
     filteredTracks,
     fetchRecommendedTracks,

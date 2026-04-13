@@ -23,6 +23,7 @@ export default function VibePicker({ handleCreatePlaylist, closeAllDrawers }) {
 
   const {
     phase,
+    error,
     userTopData,
     filteredTracks,
     fetchRecommendedTracks,
@@ -38,6 +39,7 @@ export default function VibePicker({ handleCreatePlaylist, closeAllDrawers }) {
 
 
   const [userInput, setUserInput] = useState("");
+  const [openAiApiKey, setOpenAiApiKey] = useState("");
   const [playlistName, setPlaylistName] = useState(userInput);
   const [anchorPoster, setAnchorPoster] = useState(null);
 
@@ -71,7 +73,7 @@ export default function VibePicker({ handleCreatePlaylist, closeAllDrawers }) {
 
   const handleReadyClick = () => {
     setPlaylistName(userInput);
-    fetchRecommendedTracks(userInput);
+    fetchRecommendedTracks(userInput, openAiApiKey);
   };
 
   const handleKeyPress = (event) => {
@@ -120,9 +122,12 @@ export default function VibePicker({ handleCreatePlaylist, closeAllDrawers }) {
             {phase === 'input' && (
               <GPTinput
                 userInput={userInput}
+                openAiApiKey={openAiApiKey}
                 handleInputChange={handleInputChange}
+                handleApiKeyChange={(event) => setOpenAiApiKey(event.target.value)}
                 handleSubmit={handleReadyClick}
                 handleKeyPress={handleKeyPress}
+                errorMessage={error}
               />
             )}
             {phase === 'processing' && (

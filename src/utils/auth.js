@@ -1,9 +1,8 @@
 import axios from 'axios';
 import queryString from 'query-string';
 
-const clientId = 'bea1db6218ac4115ab7542a5ede4d160';
-const clientSecret = '2cae742a30cb4b69b155f0280003da75';
-const redirectUri = 'https://musaic-topaz.vercel.app/callback';
+const clientId = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID || 'bea1db6218ac4115ab7542a5ede4d160';
+const redirectUri = process.env.NEXT_PUBLIC_SPOTIFY_REDIRECT_URI || 'https://musaic-topaz.vercel.app/callback';
 
 export const getAuthorizeUrl = () => {
   const params = {
@@ -20,24 +19,12 @@ export const getAuthorizeUrl = () => {
 };
 
 export const getAccessToken = async (code) => {
-  const tokenEndpoint = 'https://accounts.spotify.com/api/token';
-
-  const requestBody = {
-    client_id: clientId,
-    client_secret: clientSecret,
-    grant_type: 'authorization_code',
-    code,
-    redirect_uri: redirectUri,
-  };
-
   try {
-    const response = await axios.post(tokenEndpoint, queryString.stringify(requestBody), {
+    const response = await axios.post('/api/exchange_spotify_token', { code }, {
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Type': 'application/json',
       },
     });
-
-    console.log('Token exchange response:', response.data); // Add this line
 
     const accessToken = response.data.access_token;
 
@@ -47,8 +34,6 @@ export const getAccessToken = async (code) => {
         'Authorization': `Bearer ${accessToken}`,
       },
     });
-
-    console.log('User response:', userResponse.data); // Add this line
 
     // Add the display name to the response data
     response.data.display_name = userResponse.data.display_name;

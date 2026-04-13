@@ -1,8 +1,6 @@
-Flask
-flask-CORS
-requests
-pymongo
-bson
-spotipy
-openai
-python-dotenv
+Flask>=3.0.3
+flask-CORS>=5.0.0
+requests>=2.32.3
+pymongo>=4.8.0
+spotipy>=2.25.0
+python-dotenv>=1.0.1

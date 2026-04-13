@@ -14,10 +14,6 @@
       "use": "@vercel/python"
     },
     {
-      "src": "api/mongodb_helper.py",
-      "use": "@vercel/python"
-    },
-    {
       "src": "api/delete_playlist.py",
       "use": "@vercel/python"
     },
@@ -34,15 +30,11 @@
       "use": "@vercel/python"
     },
     {
-      "src": "api/Musaic.py",
-      "use": "@vercel/python"
-    },
-    {
-      "src": "api/handleGenres.py",
-      "use": "@vercel/python"
-    },
-    {
       "src": "api/delete_userdata.py",
+      "use": "@vercel/python"
+    },
+    {
+      "src": "api/exchange_spotify_token.py",
       "use": "@vercel/python"
     }
   ],
@@ -72,16 +64,12 @@
       "destination": "/api/get_GPT_artists.py"
     },
     {
-      "source": "/api/Musaic",
-      "destination": "/api/Musaic.py"
-    }, 
-    {
-      "source": "/api/handleGenres",
-      "destination": "/api/handleGenres.py"
-    }, 
-    {
       "source": "/api/delete_userdata",
       "destination": "/api/delete_userdata.py"
+    },
+    {
+      "source": "/api/exchange_spotify_token",
+      "destination": "/api/exchange_spotify_token.py"
     }
   ]
 }
