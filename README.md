@@ -11,15 +11,6 @@ Musaic is a web-based platform, so there is no need to install any software. Sim
 NOTE: As the platform utilizes the free access version of the Spotify API, use is limited to 25 registered users on the Spotify API. To request access, please contact the owner of the repository.
 
 # Security + Keys Setup
-This project now avoids shipping private API secrets in frontend code.
-
-Set these Vercel environment variables:
-
-- `SPOTIFY_CLIENT_ID`
-- `SPOTIFY_CLIENT_SECRET`
-- `SPOTIFY_REDIRECT_URI` (example: `https://your-domain/callback`)
-- `NEXT_PUBLIC_SPOTIFY_CLIENT_ID`
-- `NEXT_PUBLIC_SPOTIFY_REDIRECT_URI`
 
 OpenAI usage in the Vibe Picker now requires each user to enter their own OpenAI API key in the UI. The key is sent only for that request and is not stored in the database.
 
