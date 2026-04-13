@@ -63,7 +63,7 @@ IMPORTANT: As this was a project that had to be in working condition within a sh
 Solo or Collaborative:
 Musaic allows users to choose between creating a playlist on their own or with their friends. Please refer to the Dashboard section for more information. 
 
-Note: the collaborative feature of Musaic is currently unavailable
+Note: the collaborative feature of Musaic is **in beta** and may not work as intended.
 
 ![Alt text](img/get_started.png)
 
